@@ -1,7 +1,7 @@
 ## An anatomy of servers ##
-How do the webservers work?
-Why does thread-based concurrency not scale?
-How can event-based/non-blocking servers shine?
+* How do the webservers work?
+* Why does thread-based concurrency not scale?
+* How can event-based/non-blocking servers shine?
 
 
 ## Prerequisites ##
