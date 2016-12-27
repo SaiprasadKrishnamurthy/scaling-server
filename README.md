@@ -6,8 +6,7 @@ How can event-based/non-blocking servers shine?
 
 ## Prerequisites ##
 * Java 8
-* Install LOMBOK Plugin on your IDE (Eclipse or IntelliJ)
-
+## Types of server implementations ##
 | Concurrency | Blocking or Non Blocking |
 | Single Threaded | Blocking |
 | MultiThreaded | Blocking |
