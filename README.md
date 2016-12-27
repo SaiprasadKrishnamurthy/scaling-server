@@ -6,6 +6,7 @@ How can event-based/non-blocking servers shine?
 
 ## Prerequisites ##
 * Java 8
+
 ## Types of server implementations ##
 | Concurrency | Blocking or Non Blocking |
 | Single Threaded | Blocking |
