@@ -17,10 +17,11 @@
 
 
 ## Handy commands I used on OS/X to increase the no of open sockets ##
+```
 sudo sysctl -w kern.maxfiles=1000200
 sudo sysctl -w kern.maxfilesperproc=1000100
 sudo ulimit -n 1000000
-
+```
 
 
 
