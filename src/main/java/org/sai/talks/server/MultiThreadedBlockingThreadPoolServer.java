@@ -17,7 +17,7 @@ public class MultiThreadedBlockingThreadPoolServer {
     public static void main(String[] args) throws Exception {
         ServerSocket serverSocket = new ServerSocket();
         serverSocket.bind(new InetSocketAddress("localhost", 7072));
-        ExecutorService threadpool = Executors.newFixedThreadPool(200);
+        ExecutorService threadpool = Executors.newFixedThreadPool(100);
 
         System.out.println("Waiting for someone to connect with me .....");
         while (true) {
@@ -26,7 +26,7 @@ public class MultiThreadedBlockingThreadPoolServer {
             Runnable requestHandler = () -> {
                 try {
                     while (true) {
-                        clientSocket.getOutputStream().write(AppUtils.doBusinessLogic(clientSocket.getInputStream()).getBytes());
+                        clientSocket.getOutputStream().write(AppUtils.doBusinessLogic(clientSocket.getInputStream(), "MultiThreadedBlockingThreadPoolServer").getBytes());
                     }
                 } catch (IOException ignore) {
                 }

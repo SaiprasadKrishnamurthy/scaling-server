@@ -23,7 +23,7 @@ public class MultiThreadedBlockingOnTheFlyThreadsServer {
 
             new Thread(() -> {
                 try {
-                    clientSocket.getOutputStream().write(AppUtils.doBusinessLogic(clientSocket.getInputStream()).getBytes());
+                    clientSocket.getOutputStream().write(AppUtils.doBusinessLogic(clientSocket.getInputStream(), "MultiThreadedBlockingOnTheFlyThreadsServer").getBytes());
                 } catch (IOException ignore) {
                 }
             }).start();

@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 // PORT 7074
 public class MultiThreadedNonBlockingServer {
     private static Map<SocketChannel, byte[]> dataMap = new ConcurrentHashMap<>();
-    private static ExecutorService writeWorkerPool = Executors.newFixedThreadPool(30);
+    private static ExecutorService writeWorkerPool = Executors.newFixedThreadPool(100);
 
 
     public static void main(String[] args) throws Exception {
@@ -35,6 +35,7 @@ public class MultiThreadedNonBlockingServer {
         serverChannel.socket().bind(new InetSocketAddress("localhost", 7074));
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
         AtomicInteger clientsCount = new AtomicInteger(0);
+        int index = 0;
 
 
         // Listen to events in this infinite event loop.
@@ -55,12 +56,13 @@ public class MultiThreadedNonBlockingServer {
                     SocketChannel socketChannel = serverSocketChannel.accept();
                     socketChannel.configureBlocking(false);
                     socketChannel.register(selector, SelectionKey.OP_READ);
-                    System.out.println("Total clients connected: " + clientsCount.incrementAndGet());
-                    System.out.println();
 
                 } else if (key.isReadable()) {
                     read(key);
                 } else if (key.isWritable()) {
+                    System.out.println("Connection : "+index);
+                    index++;
+                    key.interestOps(SelectionKey.OP_READ);
                     writeWorkerPool.submit(() -> write(key));
                 }
             }
@@ -72,8 +74,7 @@ public class MultiThreadedNonBlockingServer {
             SocketChannel channel = (SocketChannel) key.channel();
             byte[] data = dataMap.get(channel);
             dataMap.remove(channel);
-            channel.write(ByteBuffer.wrap(AppUtils.doBusinessLogic(new ByteArrayInputStream(data)).getBytes()));
-            key.interestOps(SelectionKey.OP_READ);
+            channel.write(ByteBuffer.wrap(AppUtils.doBusinessLogic(new ByteArrayInputStream(data), "MultiThreadedNonBlockingServer").getBytes()));
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -82,7 +83,7 @@ public class MultiThreadedNonBlockingServer {
     private static void read(final SelectionKey key) {
         try {
             SocketChannel channel = (SocketChannel) key.channel();
-            ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+            ByteBuffer readBuffer = ByteBuffer.allocate(1048);
             readBuffer.clear();
             int read;
             try {
@@ -98,7 +99,7 @@ public class MultiThreadedNonBlockingServer {
                 return;
             }
             readBuffer.flip();
-            byte[] data = new byte[80];
+            byte[] data = new byte[200];
             readBuffer.get(data, 0, read);
             dataMap.put(channel, data);
             key.interestOps(SelectionKey.OP_WRITE);

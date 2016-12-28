@@ -19,7 +19,7 @@ public class SingleThreadedBlockingServer {
         Socket clientSocket = serverSocket.accept(); // This is blocking until a client establishes a connection.
         System.out.println("Hey! I'm connected to: " + clientSocket);
         while (clientSocket.isConnected()) {
-            clientSocket.getOutputStream().write(AppUtils.doBusinessLogic(clientSocket.getInputStream()).getBytes());
+            clientSocket.getOutputStream().write(AppUtils.doBusinessLogic(clientSocket.getInputStream(), "SingleThreadedBlockingServer").getBytes());
         }
     }
 }

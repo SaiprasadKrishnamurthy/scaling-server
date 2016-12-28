@@ -50,7 +50,6 @@ public class SingleThreadedNonBlockingServer {
                     SocketChannel socketChannel = serverSocketChannel.accept();
                     socketChannel.configureBlocking(false);
                     socketChannel.register(selector, SelectionKey.OP_READ);
-                    System.out.println("[" + clientsCount.incrementAndGet() + "] Accepted connection from: " + socketChannel);
                 } else if (key.isReadable()) {
                     read(key);
                 } else if (key.isWritable()) {
@@ -64,7 +63,7 @@ public class SingleThreadedNonBlockingServer {
         SocketChannel channel = (SocketChannel) key.channel();
         byte[] data = dataMap.get(channel);
         dataMap.remove(channel);
-        channel.write(ByteBuffer.wrap(AppUtils.doBusinessLogic(new ByteArrayInputStream(data)).getBytes()));
+        channel.write(ByteBuffer.wrap(AppUtils.doBusinessLogic(new ByteArrayInputStream(data), "SingleThreadedNonBlockingServer").getBytes()));
         key.interestOps(SelectionKey.OP_READ);
     }
 
@@ -76,19 +75,17 @@ public class SingleThreadedNonBlockingServer {
         try {
             read = channel.read(readBuffer);
         } catch (IOException e) {
-            System.out.println("Reading problem, closing connection");
             key.cancel();
             channel.close();
             return;
         }
         if (read == -1) {
-            System.out.println("Nothing was there to be read, closing connection");
             channel.close();
             key.cancel();
             return;
         }
         readBuffer.flip();
-        byte[] data = new byte[80];
+        byte[] data = new byte[150];
         readBuffer.get(data, 0, read);
         dataMap.put(channel, data);
         key.interestOps(SelectionKey.OP_WRITE);
